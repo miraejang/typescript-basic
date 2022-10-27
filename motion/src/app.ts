@@ -60,6 +60,24 @@ class App {
       TextSectionInput,
       (input: TextSectionInput) => new TodoComponent(input.title, input.body)
     );
+
+    // For demo :)
+    this.page.addChild(
+      new ImageComponent('Image', 'https://picsum.photos/800/400')
+    );
+    this.page.addChild(
+      new VideoComponent('Video', 'https://youtu.be/3nVmnY1l-4k')
+    );
+    this.page.addChild(new NoteComponent('Note', 'say hello~'));
+    this.page.addChild(new TodoComponent('todo', 'study'));
+    this.page.addChild(
+      new ImageComponent('Image', 'https://picsum.photos/800/400')
+    );
+    this.page.addChild(
+      new VideoComponent('Video', 'https://youtu.be/3nVmnY1l-4k')
+    );
+    this.page.addChild(new NoteComponent('Note', 'say hello~'));
+    this.page.addChild(new TodoComponent('todo', 'study'));
   }
 
   private bindElementToDialog<T extends (MediaData | TextData) & Component>(

@@ -8,6 +8,8 @@ interface SectionContainer extends Component, Composable {
   setOnCloseListener(listener: OnCloseListener): void;
   setOnDragStateListener(listener: OnDragStateListener<SectionContainer>): void;
   muteChildred(state: 'mute' | 'unmute'): void;
+  getBoundRect(): DOMRect;
+  onDropped(): void;
 }
 type SectionContainerConstructor = {
   new (): SectionContainer;
@@ -53,15 +55,23 @@ export class PageItemComponent
 
   onDragStart(_: DragEvent) {
     this.notifyDragObservers('start');
+    this.element.classList.add('lifted');
   }
   onDragEnd(_: DragEvent) {
     this.notifyDragObservers('stop');
+    this.element.classList.remove('lifted');
   }
   onDragEnter(_: DragEvent) {
     this.notifyDragObservers('enter');
+    this.element.classList.add('drop-area');
   }
   onDragLeave(_: DragEvent) {
     this.notifyDragObservers('leave');
+    this.element.classList.remove('drop-area');
+  }
+
+  onDropped() {
+    this.element.classList.remove('drop-area');
   }
 
   notifyDragObservers(state: DragState) {
@@ -88,6 +98,10 @@ export class PageItemComponent
       this.element.classList.remove('mute-children');
     }
   }
+
+  getBoundRect(): DOMRect {
+    return this.element.getBoundingClientRect();
+  }
 }
 
 export class PageComponenet
@@ -111,20 +125,24 @@ export class PageComponenet
 
   onDragOver(event: DragEvent) {
     event.preventDefault();
-    console.log('on darg over');
   }
   onDrop(event: DragEvent) {
     event.preventDefault();
-    console.log('on drop');
 
     // change position
-    if (!this.dragTarget) {
+    if (!this.dropTarget) {
       return;
     }
     if (this.dragTarget && this.dragTarget !== this.dropTarget) {
+      const dropY = event.clientY;
+      const srcElement = this.dragTarget.getBoundRect();
       this.dragTarget.removeFrom(this.element);
-      this.dropTarget?.attach(this.dragTarget, 'beforebegin');
+      this.dropTarget.attach(
+        this.dragTarget,
+        dropY < srcElement.y ? 'beforebegin' : 'afterend'
+      );
     }
+    this.dropTarget.onDropped();
   }
 
   addChild(section: Component) {
@@ -138,7 +156,6 @@ export class PageComponenet
     this.children.add(item);
     item.setOnDragStateListener(
       (target: SectionContainer, state: DragState) => {
-        console.log(target, state);
         switch (state) {
           case 'start':
             this.dragTarget = target;
