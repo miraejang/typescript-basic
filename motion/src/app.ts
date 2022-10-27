@@ -2,10 +2,11 @@ import { VideoComponent } from './item/video.js';
 import { TodoComponent } from './item/todo.js';
 import { NoteComponent } from './item/note.js';
 import { ImageComponent } from './item/image.js';
-import { PageComponenet } from './components/page/page.js';
+import { Composable, PageComponenet } from './components/page/page.js';
+import { Component } from './components/component.js';
 
 class App {
-  private readonly page: PageComponenet;
+  private readonly page: Component & Composable;
   constructor(appRoot: HTMLElement) {
     this.page = new PageComponenet();
     this.page.attachTo(appRoot);
@@ -14,16 +15,16 @@ class App {
       'Image Title',
       'https://picsum.photos/600/300'
     );
-    image.attachTo(appRoot, 'beforeend');
+    this.page.addChild(image);
     const note = new NoteComponent('Note Title', 'hi~!');
-    note.attachTo(appRoot, 'beforeend');
+    this.page.addChild(note);
     const todo = new TodoComponent('Todo Title', 'hi~!');
-    todo.attachTo(appRoot, 'beforeend');
+    this.page.addChild(todo);
     const video = new VideoComponent(
       'Video Title',
       'https://youtu.be/3nVmnY1l-4k'
     );
-    video.attachTo(appRoot, 'beforeend');
+    this.page.addChild(video);
   }
 }
 
