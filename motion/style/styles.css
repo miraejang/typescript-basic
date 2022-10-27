@@ -76,13 +76,13 @@ body {
   flex-direction: column;
 }
 
-.banner {
+.header {
   background: var(--bg-main-color);
   border-bottom: 1px solid var(--bg-accent-color);
   text-align: center;
 }
 
-.banner__title {
+.header__title {
   margin: 20px;
   color: var(--accent-color);
 }
